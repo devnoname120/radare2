@@ -227,14 +227,17 @@ typedef struct r_io_plugin_t {
 typedef enum {
 	R_IO_MAP_CLASS_HEAP,
 	R_IO_MAP_CLASS_STACK,
-	R_IO_MAP_CLASS_SYSTEM,
+	R_IO_MAP_CLASS_SYSTEM, // frameworks, dyldcache, ..
+	R_IO_MAP_CLASS_LIBRARY, // maybe the same of system?
 	R_IO_MAP_CLASS_MMAP, // FILE?
-	R_IO_MAP_CLASS_MMIO,
-	R_IO_MAP_CLASS_JIT,
+	R_IO_MAP_CLASS_MMIO, // memory mapped devices
+	R_IO_MAP_CLASS_DMA, // high speed hw data transfer
+	R_IO_MAP_CLASS_JIT, // just in time code
+	R_IO_MAP_CLASS_BSS,
 	R_IO_MAP_CLASS_SHARED, // ipc, etc
 	R_IO_MAP_CLASS_PRIVATE,
 	R_IO_MAP_CLASS_DATA,
-	R_IO_MAP_CLASS_KERNEL, // VDSO, etc
+	R_IO_MAP_CLASS_KERNEL, // VDSO, etc, text|data|buffers
 	R_IO_MAP_CLASS_SWAP,
 	R_IO_MAP_CLASS_GUARD, // surrounding stack for protections
 	R_IO_MAP_CLASS_PERSISTENT,
@@ -245,6 +248,15 @@ typedef enum {
 	R_IO_MAP_CLASS_COW,
 	R_IO_MAP_CLASS_PAGETABLES,
 } RIOMapClass;
+
+typedef enum {
+	R_IO_MAP_ATTR_PAGED, // anything can be non-paged.. must be bitfield
+	R_IO_MAP_ATTR_ASLR,
+	R_IO_MAP_ATTR_DEP, // same as W^X
+	R_IO_MAP_ATTR_ENCLAVE, // protected by a secure enclave
+	R_IO_MAP_ATTR_COMPRESSED,
+	R_IO_MAP_ATTR_LARGE, // different alignment for big data
+} RIOMapAttribute;
 
 typedef struct r_io_map_t {
 	int fd;
