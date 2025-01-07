@@ -223,6 +223,29 @@ typedef struct r_io_plugin_t {
 #define	R_IO_MAP_TIE_FLG_BACK	1		//ties a map so that it resizes when the desc resizes
 #define	R_IO_MAP_TIE_FLG_FORTH	(1 << 1)	//ties a map so that the desc resizes when the map resizes
 
+// not sure if this shoul db enum, bitfield or just char*
+typedef enum {
+	R_IO_MAP_CLASS_HEAP,
+	R_IO_MAP_CLASS_STACK,
+	R_IO_MAP_CLASS_SYSTEM,
+	R_IO_MAP_CLASS_MMAP, // FILE?
+	R_IO_MAP_CLASS_MMIO,
+	R_IO_MAP_CLASS_JIT,
+	R_IO_MAP_CLASS_SHARED, // ipc, etc
+	R_IO_MAP_CLASS_PRIVATE,
+	R_IO_MAP_CLASS_DATA,
+	R_IO_MAP_CLASS_KERNEL, // VDSO, etc
+	R_IO_MAP_CLASS_SWAP,
+	R_IO_MAP_CLASS_GUARD, // surrounding stack for protections
+	R_IO_MAP_CLASS_PERSISTENT,
+	R_IO_MAP_CLASS_NULL, // to catch null derefs
+	R_IO_MAP_CLASS_GPU,
+	R_IO_MAP_CLASS_TLS, // thread-local storage
+	R_IO_MAP_CLASS_BUFFER, // temporal
+	R_IO_MAP_CLASS_COW,
+	R_IO_MAP_CLASS_PAGETABLES,
+} RIOMapClass;
+
 typedef struct r_io_map_t {
 	int fd;
 	int perm;
@@ -233,6 +256,7 @@ typedef struct r_io_map_t {
 	RRBTree *overlay;
 	char *name;
 	ut32 tie_flags;
+	char *klass; // 
 } RIOMap;
 
 typedef struct r_io_map_ref_t {
