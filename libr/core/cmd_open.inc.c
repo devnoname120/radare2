@@ -628,6 +628,13 @@ static void cmd_omf(RCore *core, int argc, char *argv[]) {
 			const int id = r_num_math (core->num, argv[0]);
 			RIOMap *map = r_io_map_get (core->io, id);
 			if (map) {
+				if (argc > 2) {
+					bool res = r_io_map_setattr_fromstring (map, argv[2]);
+					if (!res) {
+						R_LOG_ERROR ("Invalid meta type string");
+						break;
+					}
+				}
 				int nperm = r_str_rwx (argv[1]);
 				if (nperm < 0) {
 					R_LOG_ERROR ("Invalid permission string");
@@ -1264,7 +1271,17 @@ static void cmd_open_map(RCore *core, const char *input) {
 			}
 			break;
 		case '?':
-			r_core_cmd_help (core, help_msg_om);
+			r_core_cmd_help_match (core, help_msg_om, "omf");
+			break;
+		case 0:
+			{
+				RIOMap *map = r_io_map_get_at (core->io, core->offset);
+				if (map) {
+					char *s = r_io_map_getattr (map);
+					r_cons_println (s);
+					free (s);
+				}
+			}
 			break;
 		default:
 			r_core_return_invalid_command (core, "omf", input[2]);

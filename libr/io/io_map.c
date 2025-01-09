@@ -765,7 +765,6 @@ static const char* metatypename[R_IO_MAP_META_TYPE_LAST] = {
 	[R_IO_MAP_META_TYPE_BSS] = "bss",
 	[R_IO_MAP_META_TYPE_SHARED] = "shared",
 	[R_IO_MAP_META_TYPE_KERNEL] = "kernel",
-	[R_IO_MAP_META_TYPE_SWAP] = "swap",
 	[R_IO_MAP_META_TYPE_GUARD] = "guard",
 	[R_IO_MAP_META_TYPE_NULL] = "null",
 	[R_IO_MAP_META_TYPE_GPU] = "gpu",
@@ -790,10 +789,10 @@ static const char *metaflagname[16] = {
 };
 
 R_API bool r_io_map_setattr_fromstring(RIOMap *map, const char *s) {
-	ut32 mapflag = 0;
-	int i;
+	int i, maptype;
 	for (maptype = 0; maptype < R_IO_MAP_META_TYPE_LAST; maptype++) {
 		if (strstr (s, metatypename[maptype])) {
+			ut32 mapflag = 0;
 			for (i = 0; i < R_IO_MAP_META_FLAG_LAST; i++) {
 				if (strstr (s, metaflagname[i])) {
 					mapflag |= (1 << i);
@@ -823,10 +822,10 @@ R_API char *r_io_map_getattr(RIOMap *map) {
 	RStrBuf *sb = r_strbuf_new ("");
 	ut32 maptype = map->meta & 0xffff;
 	ut32 mapflag = (map->meta > 16) & 0xffff;
-	if (map->type >= R_IO_MAP_META_TYPE_LAST) {
+	if (maptype >= R_IO_MAP_META_TYPE_LAST) {
 		return false;
 	}
-	if (flags >= R_IO_MAP_META_FLAG_LAST) {
+	if (mapflag >= R_IO_MAP_META_FLAG_LAST) {
 		return false;
 	}
 	r_strbuf_append (sb, metatypename[maptype]);

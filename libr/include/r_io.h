@@ -247,10 +247,10 @@ typedef enum {
 #define R_IO_MAP_META_FLAG_LAST 16
 typedef enum {
 	R_IO_MAP_META_FLAG_PAGED, // anything can be non-paged.. must be bitfield
-	R_IO_MAP_META_TYPE_PRIVATE, // private memory
+	R_IO_MAP_META_FLAG_PRIVATE, // private memory
 	R_IO_MAP_META_FLAG_PERSISTENT, // non volatile
 	R_IO_MAP_META_FLAG_ASLR, // randomizable
-	R_IO_MAP_META_TYPE_SWAP, // swappage to disk
+	R_IO_MAP_META_FLAG_SWAP, // swappage to disk
 	R_IO_MAP_META_FLAG_DEP, // same as W^X
 	R_IO_MAP_META_FLAG_ENCLAVE, // protected by a secure enclave
 	R_IO_MAP_META_FLAG_COMPRESSED, // compressed memory
