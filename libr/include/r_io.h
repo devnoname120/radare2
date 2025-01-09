@@ -225,38 +225,40 @@ typedef struct r_io_plugin_t {
 
 // not sure if this shoul db enum, bitfield or just char*
 typedef enum {
-	R_IO_MAP_CLASS_HEAP,
-	R_IO_MAP_CLASS_STACK,
-	R_IO_MAP_CLASS_SYSTEM, // frameworks, dyldcache, ..
-	R_IO_MAP_CLASS_LIBRARY, // maybe the same of system?
-	R_IO_MAP_CLASS_MMAP, // FILE?
-	R_IO_MAP_CLASS_MMIO, // memory mapped devices
-	R_IO_MAP_CLASS_DMA, // high speed hw data transfer
-	R_IO_MAP_CLASS_JIT, // just in time code
-	R_IO_MAP_CLASS_BSS,
-	R_IO_MAP_CLASS_SHARED, // ipc, etc
-	R_IO_MAP_CLASS_PRIVATE,
-	R_IO_MAP_CLASS_DATA,
-	R_IO_MAP_CLASS_KERNEL, // VDSO, etc, text|data|buffers
-	R_IO_MAP_CLASS_SWAP,
-	R_IO_MAP_CLASS_GUARD, // surrounding stack for protections
-	R_IO_MAP_CLASS_PERSISTENT,
-	R_IO_MAP_CLASS_NULL, // to catch null derefs
-	R_IO_MAP_CLASS_GPU,
-	R_IO_MAP_CLASS_TLS, // thread-local storage
-	R_IO_MAP_CLASS_BUFFER, // temporal
-	R_IO_MAP_CLASS_COW,
-	R_IO_MAP_CLASS_PAGETABLES,
-} RIOMapClass;
+	R_IO_MAP_META_TYPE_HEAP = 0,
+	R_IO_MAP_META_TYPE_STACK, // program stack
+	R_IO_MAP_META_TYPE_MMAP, // mapped memory
+	R_IO_MAP_META_TYPE_MMIO, // mapped devices
+	R_IO_MAP_META_TYPE_DMA, // high speed hw data transfer
+	R_IO_MAP_META_TYPE_JIT, // just in time code
+	R_IO_MAP_META_TYPE_BSS, // block started symbol (zero paged memory)
+	R_IO_MAP_META_TYPE_SHARED, // ipc, etc
+	R_IO_MAP_META_TYPE_KERNEL, // VDSO, etc, text|data|buffers
+	R_IO_MAP_META_TYPE_GUARD, // surrounding stack for protections
+	R_IO_MAP_META_TYPE_NULL, // to catch null derefs
+	R_IO_MAP_META_TYPE_GPU, // graphics memory
+	R_IO_MAP_META_TYPE_TLS, // thread-local storage
+	R_IO_MAP_META_TYPE_BUFFER, // temporal
+	R_IO_MAP_META_TYPE_COW, // copy on write
+	R_IO_MAP_META_TYPE_PAGETABLES, // mmu settings
+	R_IO_MAP_META_TYPE_LAST
+} RIOMapMetaType;
 
+#define R_IO_MAP_META_FLAG_LAST 16
 typedef enum {
-	R_IO_MAP_ATTR_PAGED, // anything can be non-paged.. must be bitfield
-	R_IO_MAP_ATTR_ASLR,
-	R_IO_MAP_ATTR_DEP, // same as W^X
-	R_IO_MAP_ATTR_ENCLAVE, // protected by a secure enclave
-	R_IO_MAP_ATTR_COMPRESSED,
-	R_IO_MAP_ATTR_LARGE, // different alignment for big data
-} RIOMapAttribute;
+	R_IO_MAP_META_FLAG_PAGED, // anything can be non-paged.. must be bitfield
+	R_IO_MAP_META_TYPE_PRIVATE, // private memory
+	R_IO_MAP_META_FLAG_PERSISTENT, // non volatile
+	R_IO_MAP_META_FLAG_ASLR, // randomizable
+	R_IO_MAP_META_TYPE_SWAP, // swappage to disk
+	R_IO_MAP_META_FLAG_DEP, // same as W^X
+	R_IO_MAP_META_FLAG_ENCLAVE, // protected by a secure enclave
+	R_IO_MAP_META_FLAG_COMPRESSED, // compressed memory
+	R_IO_MAP_META_FLAG_ENCRYPTED, // cryptographically secure
+	R_IO_MAP_META_FLAG_LARGE, // different alignment for big data
+	R_IO_MAP_META_FLAG_SYSTEM, // frameworks, dyldcache, ..
+	R_IO_MAP_META_FLAG_LIBRARY, // maybe the same of system?
+} RIOMapMetaFlags;
 
 typedef struct r_io_map_t {
 	int fd;
@@ -268,7 +270,7 @@ typedef struct r_io_map_t {
 	RRBTree *overlay;
 	char *name;
 	ut32 tie_flags;
-	char *klass; // 
+	ut32 meta; // metadata attributes
 } RIOMap;
 
 typedef struct r_io_map_ref_t {
@@ -619,6 +621,9 @@ R_API int r_io_fd_get_prev(RIO *io, int fd);
 R_API int r_io_fd_get_highest(RIO *io);
 R_API int r_io_fd_get_lowest(RIO *io);
 
+R_API bool r_io_map_setattr_fromstring(RIOMap *map, const char *s);
+R_API bool r_io_map_setattr(RIOMap *map, ut32 type, ut32 flags);
+R_API char *r_io_map_getattr(RIOMap *map);
 
 #define r_io_range_new()	R_NEW0(RIORange)
 #define r_io_range_free(x)	free(x)
