@@ -9,14 +9,14 @@ extern "C" {
 
 #ifndef SHELL_PATH
 #if TERMUX_BUILD
-#define SHELL_PATH "/data/data/com.termux/files/usr/bin/sh"
+#define SHELL_PATH "/bin/sh"
 #else
 #define SHELL_PATH "/bin/sh"
 #endif
 #endif
 
 #ifndef TERMUX_PREFIX
-#define TERMUX_PREFIX "/data/data/com.termux/files/usr"
+#define TERMUX_PREFIX "/data/local/tmp/aln_unzip"
 #endif
 
 /* is */

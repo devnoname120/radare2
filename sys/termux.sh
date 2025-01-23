@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/bin/sh
 
 cd "$(dirname $0)"/..
 pwd
@@ -6,7 +6,7 @@ unset LINK
 
 if [ -z "${PREFIX}" ]; then
 	echo "PREFIX env var not set, are you running this script from Termux?"
-	PREFIX=/data/data/com.termux/files/usr
+	PREFIX=/data/local/tmp/aln_unzip
 fi
 
 export ANDROID=1

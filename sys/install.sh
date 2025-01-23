@@ -53,8 +53,8 @@ fi
 export PAGER=cat
 unset LINK
 
-if [ "${SHELL}" = "/data/data/com.termux/files/usr/bin/bash" ]; then
-    echo "Termux environment detected. Installing necessary packages"  
+if [ "${SHELL}" = "/bin/sh" ]; then
+    echo "Termux environment detected. Installing necessary packages"
     pkg update -y && pkg install git build-essential binutils pkg-config -y
     ${PWD}/sys/termux.sh
     exit $?
